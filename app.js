@@ -68,11 +68,30 @@ app.post('/todos', (req, res) => {
 })
 // update todo page
 app.get('/todos/:id/edit', (req, res) => {
-  res.send('update todo page')
+  Todo.findById(req.params.id)
+    .lean()
+    .then(todo => {
+      return res.render('edit', { todo })
+    })
+    .catch(err => {
+      return console.error(err)
+    })
 })
 // update todo
 app.post('/todos/:id/edit', (req, res) => {
-  res.send('update todo')
+  Todo.findById(req.params.id)
+    .then(todo => {
+      todo.name = req.body.name
+      todo.save(err => {
+        if (err) {
+          return console.error(err)
+        }
+        return res.redirect(`/todos/${req.params.id}`)
+      })
+    })
+    .catch(err => {
+      return console.error(err)
+    })
 })
 // delete todo
 app.post('/todos/:id/delete', (req, res) => {
