@@ -23,11 +23,18 @@ const Todo = require('./models/todo')
 // setting routes
 // homepage
 app.get('/', (req, res) => {
-  res.render('index')
+  Todo.find()
+    .lean()
+    .exec((err, todos) => {
+      if (err) {
+        return console.error(err)
+      }
+      return res.render('index', { todos })
+    })
 })
 // show all todos
 app.get('/todos', (req, res) => {
-  res.send('show all todos')
+  res.redirect('/')
 })
 // get one todo
 app.get('/todos/:id', (req, res) => {
