@@ -1,6 +1,10 @@
 const express = require('express')
 const app = express()
 const port = 3000
+const exphbs = require('express-handlebars')
+
+app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
+app.set('view engine', 'handlebars')
 
 const mongoose = require('mongoose')
 mongoose.connect('mongodb://localhost/AC_S3_todo', { useNewUrlParser: true, useUnifiedTopology: true })
@@ -19,7 +23,7 @@ const Todo = require('./models/todo')
 // setting routes
 // homepage
 app.get('/', (req, res) => {
-  res.send('homepage')
+  res.render('index')
 })
 // show all todos
 app.get('/todos', (req, res) => {
