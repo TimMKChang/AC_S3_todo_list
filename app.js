@@ -45,7 +45,14 @@ app.get('/todos/new', (req, res) => {
 })
 // get one todo
 app.get('/todos/:id', (req, res) => {
-  res.send('show one todo')
+  Todo.findById(req.params.id)
+    .lean()
+    .then(todo => {
+      return res.render('detail', { todo })
+    })
+    .catch(err => {
+      return console.error(err)
+    })
 })
 // create todo
 app.post('/todos', (req, res) => {
