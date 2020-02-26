@@ -24,101 +24,10 @@ db.once('open', () => {
   console.log('mongodb connected')
 })
 
-const Todo = require('./models/todo')
 
-// setting routes
-// homepage
-app.get('/', (req, res) => {
-  Todo.find()
-    .sort({ name: 'asc' })
-    .lean()
-    .then(todos => {
-      return res.render('index', { todos })
-    })
-    .catch(err => {
-      return console.error(err)
-    })
-})
-// show all todos
-app.get('/todos', (req, res) => {
-  return res.redirect('/')
-})
-// create todo page
-app.get('/todos/new', (req, res) => {
-  return res.render('new')
-})
-// get one todo
-app.get('/todos/:id', (req, res) => {
-  Todo.findById(req.params.id)
-    .lean()
-    .then(todo => {
-      return res.render('detail', { todo })
-    })
-    .catch(err => {
-      return console.error(err)
-    })
-})
-// create todo
-app.post('/todos', (req, res) => {
-  const todo = new Todo({
-    name: req.body.name
-  })
-  todo.save(err => {
-    if (err) {
-      return console.error(err)
-    }
-    return res.redirect('/')
-  })
-})
-// update todo page
-app.get('/todos/:id/edit', (req, res) => {
-  Todo.findById(req.params.id)
-    .lean()
-    .then(todo => {
-      return res.render('edit', { todo })
-    })
-    .catch(err => {
-      return console.error(err)
-    })
-})
-// update todo
-app.put('/todos/:id', (req, res) => {
-  Todo.findById(req.params.id)
-    .then(todo => {
-      todo.name = req.body.name
-
-      if (req.body.done === 'on') {
-        todo.done = true
-      } else {
-        todo.done = false
-      }
-
-      todo.save(err => {
-        if (err) {
-          return console.error(err)
-        }
-        return res.redirect(`/todos/${req.params.id}`)
-      })
-    })
-    .catch(err => {
-      return console.error(err)
-    })
-})
-// delete todo
-app.delete('/todos/:id', (req, res) => {
-  Todo.findById(req.params.id)
-    .then(todo => {
-      todo.remove(err => {
-        if (err) {
-          return console.error(err)
-        }
-        res.redirect('/')
-      })
-    })
-    .catch(err => {
-      return console.error(err)
-    })
-})
+// require routes
+app.use('/', require('./routes/home'))
+app.use('/todos', require('./routes/todos'))
 
 app.listen(port, () => {
   console.log(`App is running on localhost:${port}`)
