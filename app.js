@@ -82,6 +82,13 @@ app.post('/todos/:id/edit', (req, res) => {
   Todo.findById(req.params.id)
     .then(todo => {
       todo.name = req.body.name
+
+      if (req.body.done === 'on') {
+        todo.done = true
+      } else {
+        todo.done = false
+      }
+
       todo.save(err => {
         if (err) {
           return console.error(err)
