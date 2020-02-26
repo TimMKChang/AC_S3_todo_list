@@ -3,11 +3,14 @@ const app = express()
 const port = 3000
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
+const methodOverride = require('method-override')
 
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
 
 app.use(bodyParser.urlencoded({ extended: true }))
+
+app.use(methodOverride('_method'))
 
 const mongoose = require('mongoose')
 mongoose.connect('mongodb://localhost/AC_S3_todo', { useNewUrlParser: true, useUnifiedTopology: true })
@@ -79,7 +82,7 @@ app.get('/todos/:id/edit', (req, res) => {
     })
 })
 // update todo
-app.post('/todos/:id/edit', (req, res) => {
+app.put('/todos/:id', (req, res) => {
   Todo.findById(req.params.id)
     .then(todo => {
       todo.name = req.body.name
@@ -102,7 +105,7 @@ app.post('/todos/:id/edit', (req, res) => {
     })
 })
 // delete todo
-app.post('/todos/:id/delete', (req, res) => {
+app.delete('/todos/:id', (req, res) => {
   Todo.findById(req.params.id)
     .then(todo => {
       todo.remove(err => {
